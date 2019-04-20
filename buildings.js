@@ -9,7 +9,7 @@ class FrontBuilding{
     let minHeight = 13;
     let maxWidth = 6;
     let minWidth = 3;
-    this.scale = 10;
+    this.scale = screenY / 85.8;
     this.x = x;
     this.y = y;
     this.colorScheme = colorScheme;
@@ -66,7 +66,7 @@ class BackBuilding{
     let minHeight = 23;
     let maxWidth = 6;
     let minWidth = 3;
-    this.scale = 10;
+    this.scale = screenY / 85.8;
     this.x = x;
     this.y = y;
     this.colorScheme = colorScheme;
@@ -134,10 +134,39 @@ class Stars{
 class Road{
   constructor(){
     this.x = 0;
-    this.y = totalYoffse;
+    this.y = screenY - totalYoffset;
+    this.w = 25;
+    this.h = 12;
+    this.perspectiveOffset = 15;
+  }
+
+  showSidewalk(yOffset){
+    fill(156, 156, 168);
+    for(let i = 0; i < screenX/this.w + 1; i++){
+      quad(this.x - (this.w/2) + ((this.w + 1) * i), this.y + yOffset,
+        this.x - (this.w/2) + this.w + ((this.w + 1) * i), this.y + yOffset,
+        this.x - (this.w/2) + this.w + this.perspectiveOffset + ((this.w + 1) * i), this.y + this.h + yOffset,
+        this.x - (this.w/2) + this.perspectiveOffset + ((this.w + 1) * i), this.y + this.h + yOffset);
+    }
+  }
+  showRoad(yOffset){
+    fill(113, 97, 97);
+    quad(this.x, this.y+this.h,
+      this.x + screenX, this.y+this.h,
+      this.x + screenX, screenY - this.h,
+      this.x, screenY - this.h);
+    fill(255, 229, 229);
+    for(let i = 0; i < screenX/this.w + 1; i++){
+      quad(this.x - (this.w/2) + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) - this.h/2,
+        this.x - (this.w/2) + this.w*2 + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) - this.h/2,
+        this.x - (this.w/2) + this.w*2 + this.perspectiveOffset + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) + this.h/2,
+        this.x - (this.w/2) + this.perspectiveOffset + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) + this.h/2);
+    }
   }
 
   show(){
-
+    this.showSidewalk(0);
+    this.showRoad();
+    this.showSidewalk(((screenY * 1.2)/10) - this.h);
   }
 }

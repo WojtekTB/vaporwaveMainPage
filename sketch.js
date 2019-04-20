@@ -2,9 +2,11 @@ var screenX = window.innerWidth, screenY = window.innerHeight;
 var frontBuildings = [];
 var backBuildings = [];
 var stars;
+var road;
 var totalYoffse;
 
 function setup(){
+  console.log(screenY);
   totalYoffset = (screenY * 1.2)/10;
   let bby = screenY - totalYoffset;
   let fby = screenY - totalYoffset;
@@ -31,6 +33,8 @@ function setup(){
     frontBuildings[i].show();
   }
 
+  road = new Road();
+  road.show();
 
 }
 function draw(){
