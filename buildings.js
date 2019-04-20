@@ -15,6 +15,7 @@ class FrontBuilding{
     this.colorScheme = colorScheme;
     this.buildingHeight = Math.floor(random(minHeight, maxHeight)) * this.scale;
     this.buildingWidth = Math.floor(random(minWidth, maxWidth)) * this.scale;
+    this.roofGlow = Math.floor(random(0, 4));
 
     this.windowPadding = (this.scale/5);
     this.windowWandH = this.scale - (this.windowPadding * 2);
@@ -32,6 +33,14 @@ class FrontBuilding{
     noStroke();
     fill(this.colorScheme.fbColor);
     rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
+    if(this.buildingWidth > 3 * this.scale){
+      if(this.roofGlow === 0){
+        fill(255,130,170);
+        rect(this.x + random(10, 2*this.scale), this.y - this.buildingHeight+1, 2, -5);
+      }
+      fill(this.colorScheme.fbColor);
+      rect(this.x + 5, this.y - this.buildingHeight+1, this.buildingWidth - 10, -3);
+    }
     for(let i = 0; i < this.windows.length; i++){
       if(this.windows[i][2] === 0){
         fill(179,196,161);
@@ -89,15 +98,46 @@ class BackBuilding{
   update(){}
 }
 
-let startColors = {
-  c1: 217,148,184,
-  c1: 246,246,246,
-  c1: 217,148,184,
+let starColors = {
+  c1: [217,148,184],
+  c2: [246,246,246],
+  c3: [217,148,128],
 }
 
 class Stars{
   constructor(){
-
+    this.numberOfStars = 100;
+    this.stars = [];
+    for(let i = 0; i < this.numberOfStars; i++){
+      this.stars.push([random((screenX)/30, (screenX*29)/30), random((screenY)/30, (screenY * 29)/30 - totalYoffset*2), Math.floor(random(1, 4))]);//x, y, color
+    }
   }
 
+  show(){
+    for(let i = 0; i < this.numberOfStars; i++){
+      noStroke();
+      if(this.stars[i][2] === 1){
+        fill(starColors.c1);
+      }
+      else if(this.stars[i][2] === 2){
+        fill(starColors.c2);
+      }
+      else if(this.stars[i][2] === 3){
+        fill(starColors.c3);
+      }
+      rect(this.stars[i][0], this.stars[i][1], 2, 4);
+    }
+  }
+
+}
+
+class Road{
+  constructor(){
+    this.x = 0;
+    this.y = totalYoffse;
+  }
+
+  show(){
+
+  }
 }

@@ -1,9 +1,11 @@
 var screenX = window.innerWidth, screenY = window.innerHeight;
 var frontBuildings = [];
 var backBuildings = [];
+var stars;
+var totalYoffse;
 
 function setup(){
-  let totalYoffset = (screenY)/10;
+  totalYoffset = (screenY * 1.2)/10;
   let bby = screenY - totalYoffset;
   let fby = screenY - totalYoffset;
   createCanvas(window.innerWidth, window.innerHeight);
@@ -17,7 +19,10 @@ function setup(){
   }
 
 
-  setGradient(0, 0, screenX, screenY, color(189,130,143), color(143,121,170), 1);
+  setGradient(0, 0, screenX, screenY, color(184,125,138), color(138,116,165), 1);
+
+  stars = new Stars();
+  stars.show();
 
   for(let i = 0; i < frontBuildings.length; i++){
     backBuildings[i].show();
@@ -25,6 +30,8 @@ function setup(){
   for(let i = 0; i < frontBuildings.length; i++){
     frontBuildings[i].show();
   }
+
+
 }
 function draw(){
   //189,130,143
