@@ -170,3 +170,28 @@ class Road{
     this.showSidewalk(((screenY * 1.2)/10) - this.h);
   }
 }
+
+class Car{
+  constructor(){
+    this.x;
+    this.y = screenY - totalYoffset;
+  }
+
+  drawCarShape(impx, impy, scale){
+    fill(70);
+    beginShape();
+    // console.log(impx-(4 * scale), (impy+(4 * scale)));
+    vertex(impx+(4 * scale), (impy-(4 * scale)));
+    vertex(impx+(4 * scale), (impy-(0 * scale)));
+    vertex(impx-(5 * scale), (impy-(0 * scale)));
+    vertex(impx-(5 * scale), (impy-(2 * scale)));
+    vertex(impx-(2 * scale), (impy-(2 * scale)));
+    vertex(impx-(2 * scale), (impy-(4 * scale)));
+    vertex(impx+(4 * scale), (impy-(4 * scale)));
+    endShape(CLOSE);
+  }
+  show(){
+    this.drawCarShape(mouseX, screenY - ((screenY - this.y)/2) - 10, 10);
+    // console.log(mouseX, screenY - ((screenY - this.y)/2));//
+  }
+}

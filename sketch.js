@@ -4,9 +4,9 @@ var backBuildings = [];
 var stars;
 var road;
 var totalYoffse;
+var car;
 
 function setup(){
-  console.log(screenY);
   totalYoffset = (screenY * 1.2)/10;
   let bby = screenY - totalYoffset;
   let fby = screenY - totalYoffset;
@@ -36,10 +36,13 @@ function setup(){
   road = new Road();
   road.show();
 
+  car = new Car();
 }
 function draw(){
-  //189,130,143
-  //143,121,145
+
+  road.show();
+  car.show();
+
 }
 
 function setGradient(x, y, w, h, c1, c2, axis) {
