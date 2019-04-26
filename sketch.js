@@ -4,7 +4,13 @@ var backBuildings = [];
 var stars;
 var road;
 var totalYoffse;
-var car;
+var car1;
+var car2;//adding another car to move the other way
+var carimage;
+
+function preload(){
+  carimage = loadImage("./car.png");
+}
 
 function setup(){
   totalYoffset = (screenY * 1.2)/10;
@@ -36,13 +42,14 @@ function setup(){
   road = new Road();
   road.show();
 
-  car = new Car();
+  car1 = new Car(carimage, true);
 }
 function draw(){
 
   road.show();
   car.show();
-
+  let millisecond = millis();
+  console.log(millisecond);
 }
 
 function setGradient(x, y, w, h, c1, c2, axis) {

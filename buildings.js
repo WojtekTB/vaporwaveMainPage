@@ -141,12 +141,14 @@ class Road{
   }
 
   showSidewalk(yOffset){
+    // strokeWeight(1);
+    // stroke(10);
     fill(156, 156, 168);
     for(let i = 0; i < screenX/this.w + 1; i++){
-      quad(this.x - (this.w/2) + ((this.w + 1) * i), this.y + yOffset,
-        this.x - (this.w/2) + this.w + ((this.w + 1) * i), this.y + yOffset,
-        this.x - (this.w/2) + this.w + this.perspectiveOffset + ((this.w + 1) * i), this.y + this.h + yOffset,
-        this.x - (this.w/2) + this.perspectiveOffset + ((this.w + 1) * i), this.y + this.h + yOffset);
+      quad(this.x - (this.w/2) + ((this.w + 2) * i), this.y + yOffset,
+        this.x - (this.w/2) + this.w + ((this.w + 2) * i), this.y + yOffset,
+        this.x - (this.w/2) + this.w + this.perspectiveOffset + ((this.w + 2) * i), this.y + this.h + yOffset,
+        this.x - (this.w/2) + this.perspectiveOffset + ((this.w + 2) * i), this.y + this.h + yOffset);
     }
   }
   showRoad(yOffset){
@@ -165,6 +167,8 @@ class Road{
   }
 
   show(){
+    fill(147,112,190);
+    rect(0, this.y, screenX, screenY/3);
     this.showSidewalk(0);
     this.showRoad();
     this.showSidewalk(((screenY * 1.2)/10) - this.h);
@@ -172,26 +176,40 @@ class Road{
 }
 
 class Car{
-  constructor(){
-    this.x;
+  constructor(image, right){
+    this.x = -image.width;
     this.y = screenY - totalYoffset;
+    this.image = image;
+    this.scale = screenY * 0.00034965034965034965;
+    this.speed = random(1, 3);
+    this.roadLength = random(2,4);
+    this.movingRight = right;
   }
 
   drawCarShape(impx, impy, scale){
-    fill(70);
-    beginShape();
-    // console.log(impx-(4 * scale), (impy+(4 * scale)));
-    vertex(impx+(4 * scale), (impy-(4 * scale)));
-    vertex(impx+(4 * scale), (impy-(0 * scale)));
-    vertex(impx-(5 * scale), (impy-(0 * scale)));
-    vertex(impx-(5 * scale), (impy-(2 * scale)));
-    vertex(impx-(2 * scale), (impy-(2 * scale)));
-    vertex(impx-(2 * scale), (impy-(4 * scale)));
-    vertex(impx+(4 * scale), (impy-(4 * scale)));
-    endShape(CLOSE);
+    // fill(70);
+    // beginShape();
+    // // console.log(impx-(4 * scale), (impy+(4 * scale)));
+    // vertex(impx+(4 * scale), (impy-(4 * scale)));
+    // vertex(impx+(4 * scale), (impy-(0 * scale)));
+    // vertex(impx-(5 * scale), (impy-(0 * scale)));
+    // vertex(impx-(5 * scale), (impy-(2 * scale)));
+    // vertex(impx-(2 * scale), (impy-(2 * scale)));
+    // vertex(impx-(2 * scale), (impy-(4 * scale)));
+    // vertex(impx+(4 * scale), (impy-(4 * scale)));
+    // endShape(CLOSE);
   }
   show(){
-    this.drawCarShape(mouseX, screenY - ((screenY - this.y)/2) - 10, 10);
+    tint(255, 240)
+    if(this.movingRight){
+    image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
+    this.x += this.speed;
+    if(this.x > screenX*this.roadLength){
+      this.x = -this.image.width
+      this.roadLength = random(2,4);
+      this.speed = random(1, 3);
+    }
+  }
     // console.log(mouseX, screenY - ((screenY - this.y)/2));//
   }
 }
