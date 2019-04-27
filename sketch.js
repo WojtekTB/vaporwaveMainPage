@@ -13,6 +13,15 @@ function preload(){
 }
 
 function setup(){
+  let currentTime = hour();
+  let opasityOfDay;
+  if(currentTime > 12){
+    opasityOfDay = map(currentTime, 12, 24, 255, 0);
+  }
+  else{
+    opasityOfDay = map(currentTime, 0, 12, 0, 255);
+  }
+
   totalYoffset = (screenY * 1.2)/10;
   let bby = screenY - totalYoffset;
   let fby = screenY - totalYoffset;
@@ -26,11 +35,11 @@ function setup(){
     frontBuildings.push(new FrontBuilding(frontBuildings[i].x + frontBuildings[i].buildingWidth + random(-5, 5), fby));
   }
 
-
   setGradient(0, 0, screenX, screenY, color(184,125,138), color(138,116,165), 1);
 
-  stars = new Stars();
-  stars.show();
+    stars = new Stars();
+    stars.show();
+  setGradient(0, 0, screenX, screenY, color(135-40,206-40,235-40, opasityOfDay), color(135-40,206-40,250-40, opasityOfDay), 1);
 
   for(let i = 0; i < frontBuildings.length; i++){
     backBuildings[i].show();
@@ -45,11 +54,14 @@ function setup(){
   car1 = new Car(carimage, true);
 }
 function draw(){
-
   road.show();
-  car.show();
+  car1.show();
   let millisecond = millis();
-  console.log(millisecond);
+  fill(0);
+  let curHour = hour();
+  let curMinutes = minute();
+  text(`${curHour}:${curMinutes}`, 0, 0, 200, 200);
+  // console.log(millisecond);
 }
 
 function setGradient(x, y, w, h, c1, c2, axis) {

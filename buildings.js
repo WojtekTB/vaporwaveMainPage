@@ -1,6 +1,7 @@
 var colorScheme = {
   fbColor: [121, 142, 176],
-  bbColor: [158,136,158]
+  bbColor: [158,136,158],
+  bbWinColor: [165,143,165]
 }
 
 class FrontBuilding{
@@ -82,15 +83,34 @@ class BackBuilding{
           (this.windowPadding * 3.5) + (this.windowWandH * x) + (2 * this.windowPadding * x)]);
       }
     }
+    let currentTime = hour();
+    let opasityOfDay;
+    if(currentTime > 12){
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, 0, 5));
+    }
+    else{
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 5, 0));
+    }
+    this.currentBuildingColor = [];
+    this.currentWindowColor = [];
+    for(let i = 0; i < 3; i++){
+      this.currentBuildingColor[i] = this.colorScheme.bbColor[i] + opasityOfDay;
+    }
+    for(let i = 0; i < 3; i++){
+      this.currentWindowColor[i] = this.colorScheme.bbWinColor[i] + opasityOfDay;
+    }
+
     // console.log(this.windows[0][2]);
     // console.log({x: this.x, y: this.y, w: this.buildingWidth, h: this.buildingHeight, WandH: this.windowWandH});
   }
   show(){
     noStroke();
-    fill(this.colorScheme.bbColor);
+    console.log(this.colorScheme.bbColor);
+    console.log(this.currentBuildingColor);
+    fill(this.currentBuildingColor);
     rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
     for(let i = 0; i < this.windows.length; i++){
-      fill(165,143,165);
+      fill(this.currentWindowColor);
       // console.log(this.windows[i][2]);
       rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
     }
