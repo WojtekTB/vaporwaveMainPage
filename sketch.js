@@ -22,6 +22,7 @@ function setup(){
     opasityOfDay = map(currentTime, 0, 12, 0, 255);
   }
 
+
   totalYoffset = (screenY * 1.2)/10;
   let bby = screenY - totalYoffset;
   let fby = screenY - totalYoffset;
