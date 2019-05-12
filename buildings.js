@@ -1,4 +1,4 @@
-var colorScheme = {
+const colorScheme = {
   fbColor: [121, 142, 176],
   bbColor: [158,136,158],
   bbWinColor: [165,143,165]
@@ -58,6 +58,12 @@ class FrontBuilding{
       rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
     }
   }
+
+  simpleShow(){
+    noStroke();
+    fill(this.colorScheme.fbColor);
+    rect(this.x, this.y - 20, this.buildingWidth, 20);
+  }
   update(){}
 }
 
@@ -105,8 +111,8 @@ class BackBuilding{
   }
   show(){
     noStroke();
-    console.log(this.colorScheme.bbColor);
-    console.log(this.currentBuildingColor);
+    // console.log(this.colorScheme.bbColor);
+    // console.log(this.currentBuildingColor);
     fill(this.currentBuildingColor);
     rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
     for(let i = 0; i < this.windows.length; i++){
@@ -115,7 +121,11 @@ class BackBuilding{
       rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
     }
   }
-  update(){}
+
+  simpleShow(){
+    fill(this.currentBuildingColor);
+    rect(this.x, this.y - 20, this.buildingWidth, 20);
+  }
 }
 
 let starColors = {
@@ -158,6 +168,8 @@ class Road{
     this.w = 25;
     this.h = 12;
     this.perspectiveOffset = 15;
+    this.sidewalkY1 = this.y;
+    this.sidewalkY2 = this.y + ((screenY * 1.2)/10) - this.h;
   }
 
   showSidewalk(yOffset){
@@ -197,8 +209,16 @@ class Road{
 
 class Car{
   constructor(image, right){
-    this.x = -image.width;
+    // this.x;
+    this.x = -image.width * random(1, 5);
     this.y = screenY - totalYoffset;
+    if(right){
+      this.y = screenY - totalYoffset;
+    }
+    else{
+      this.y = screenY - totalYoffset/1.7;
+    }
+
     this.image = image;
     this.scale = screenY * 0.00034965034965034965;
     this.speed = random(1, 3);
@@ -206,30 +226,151 @@ class Car{
     this.movingRight = right;
   }
 
-  drawCarShape(impx, impy, scale){
-    // fill(70);
-    // beginShape();
-    // // console.log(impx-(4 * scale), (impy+(4 * scale)));
-    // vertex(impx+(4 * scale), (impy-(4 * scale)));
-    // vertex(impx+(4 * scale), (impy-(0 * scale)));
-    // vertex(impx-(5 * scale), (impy-(0 * scale)));
-    // vertex(impx-(5 * scale), (impy-(2 * scale)));
-    // vertex(impx-(2 * scale), (impy-(2 * scale)));
-    // vertex(impx-(2 * scale), (impy-(4 * scale)));
-    // vertex(impx+(4 * scale), (impy-(4 * scale)));
-    // endShape(CLOSE);
-  }
+  // drawCarShape(impx, impy, scale){
+  //   // fill(70);
+  //   // beginShape();
+  //   // // console.log(impx-(4 * scale), (impy+(4 * scale)));
+  //   // vertex(impx+(4 * scale), (impy-(4 * scale)));
+  //   // vertex(impx+(4 * scale), (impy-(0 * scale)));
+  //   // vertex(impx-(5 * scale), (impy-(0 * scale)));
+  //   // vertex(impx-(5 * scale), (impy-(2 * scale)));
+  //   // vertex(impx-(2 * scale), (impy-(2 * scale)));
+  //   // vertex(impx-(2 * scale), (impy-(4 * scale)));
+  //   // vertex(impx+(4 * scale), (impy-(4 * scale)));
+  //   // endShape(CLOSE);
+  // }
   show(){
     tint(255, 240)
     if(this.movingRight){
-    image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
-    this.x += this.speed;
-    if(this.x > screenX*this.roadLength){
-      this.x = -this.image.width
-      this.roadLength = random(2,4);
-      this.speed = random(1, 3);
+      image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
+      this.x += this.speed;
+      if(this.x > screenX*this.roadLength){
+        this.x = -this.image.width
+        this.roadLength = random(2,4);
+        this.speed = random(1, 3);
+      }
+    }
+    else{
+      scale(-1, 1);
+      image(this.image, this.x - screenX, this.y, this.image.width * this.scale, this.image.height * this.scale);
+      this.x += this.speed;
+      if(this.x > screenX*this.roadLength){
+        this.x = -this.image.width
+        this.roadLength = random(2,4);
+        this.speed = random(1, 3);
+      }
+        scale(-1, 1);
     }
   }
-    // console.log(mouseX, screenY - ((screenY - this.y)/2));//
+}
+
+const skinColors = [
+  "#FFDFC4", "#F0D5BE", "#EECEB3",
+  "#E1B899", "#E5C298", "#FFDCB2",
+  "#E5B887", "#E5A073", "#E79E6D",
+  "#DB9065", "#CE967C", "#C67856",
+  "#BA6C49", "#A57257", "#F0C8C9",
+  "#DDA8A0", "#B97C6D", "#A8756C",
+  "#AD6452"
+]
+const shirtColors = [
+  "#FF6AD5", "#C774E8", "#AD8CFF",
+  "#8795E8", "#94D0FF"
+]
+
+
+class Person{
+  constructor(startX, maxY, floorY){
+    this.x = startX;
+    this.y = random(floorY, maxY);
+    this.direction = Math.floor(random(0, 180));//direction person faces on spawn
+    this.movementSpeed = 1;//how fast person moves around
+    this.floorY = floorY;//floor for the person/lowest point it can go to
+    this.shirtColor = shirtColors[Math.floor(random(0, shirtColors.length))];//pick skin and shirt colors
+    this.skinColor = skinColors[Math.floor(random(0, skinColors.length))];
+
+    this.timing = Math.floor(random(5, 9));
+
+    this.personMovingXList = {
+      movingRight: true,
+      movingLeft: false,
+    }
+    this.personMovingYList = {
+      movingUp: true,
+      movingDown: false,
+    }
+    this.personMovingX;
+    // this.personMovingY;
+    this.movementX;
+    // this.movementY;
+    this.changeAction();
+  }
+
+  changeAction(){
+    let placeholderX = Math.floor(random(0, 1.99));
+    if(placeholderX === 0){
+      this.personMovingX = this.personMovingXList.movingLeft;
+    }
+    else{
+      this.personMovingX = this.personMovingXList.movingRight;
+    }
+
+    // let placeholderY = Math.floor(random(0, 1.99));
+    // if(placeholderY === 0){
+    //   this.personMovingY = this.personMovingYList.movingDown;
+    // }
+    // else{
+    //   this.personMovingY = this.personMovingYList.movingUp;
+    // }
+    let placeholder = Math.floor(random(0, 1.99));
+    if(placeholder === 0){
+      this.movementX = false;
+    }
+    else{
+      this.movementX = true;
+    }
+  //   placeholder = Math.floor(random(0, 1.99));
+  //   if(placeholder === 0){
+  //     this.movementY = false;
+  //   }
+  //   else{
+  //     this.movementY = true;
+  //   }
+  //   console.log(this.movementX);
+  //   console.log(this.movementY);
+  }
+
+  drawPerson(x, y){
+    let myScale = 0.75;
+    fill(this.skinColor);
+    rect(x, y - (myScale*(30)), 10 * myScale, 10 * myScale);
+    fill(this.shirtColor);
+    rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
+  }
+
+  draw(){
+    this.drawPerson(this.x, this.y);
+    if((second()%this.timing === 0) === false){
+      if(this.movementX === true){
+        if(this.personMovingX === this.personMovingXList.movingLeft){
+          this.x -= this.movementSpeed;
+        }
+        else if(this.personMovingX === this.personMovingXList.movingRight){
+          this.x += this.movementSpeed;
+        }
+      }
+
+      // if(this.movementY === true){
+      //   if(this.personMovingY === this.personMovingYList.movingUp){
+      //     this.y -= this.movementSpeed;
+      //   }
+      //   else if(this.personMovingY === this.personMovingYList.movingDown){
+      //     this.y += this.movementSpeed;
+      //   }
+      // }
+    }
+    if(second()%this.timing === 0){
+      this.changeAction();
+    }
   }
 }
