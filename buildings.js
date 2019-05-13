@@ -161,6 +161,18 @@ class Stars{
 
 }
 
+class Clouds{
+  constructor(cloudimg, show){
+    this.cloudimg = cloudimg;
+    this.show = show;
+    this.heaviness = 4;//number of formations
+    this.bulk = 4;//number of clouds per formation
+  }
+  show(){
+    image(this.cloudimg, mouseX, mouseY, 200, 200);
+  }
+}
+
 class Road{
   constructor(){
     this.x = 0;

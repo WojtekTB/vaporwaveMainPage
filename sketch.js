@@ -7,12 +7,15 @@ var road;
 var totalYoffse;
 var car1;
 var car2;//adding another car to move the other way
+var clouds;
 var carimage;
+var cloudimage;
 var peopleOnTopSidewalk = [];
 var peopleOnBottomSidewalk = [];
 
 function preload(){
   carimage = loadImage("./car.png");
+  cloudimage = loadImage("./cloud.png");
   ambSound = loadSound("./sounds/traffic.mp3");
 }
 
@@ -31,6 +34,7 @@ function setup(){
   setGradient(0, 0, screenX, screenY, color(184,125,138), color(138,116,165), 1);
   stars = new Stars();
   stars.show();
+  clouds = new Clouds(cloudimage, true);
   setGradient(0, 0, screenX, screenY, color(135-40,206-40,235-40, opasityOfDay), color(135-40,206-40,250-40, opasityOfDay), 1);
   for(let i = 0; i < frontBuildings.length; i++){
     backBuildings[i].show();
@@ -72,6 +76,7 @@ function draw(){
   let curHour = hour();
   let curMinutes = minute();
   text(`${curHour}:${curMinutes}`, 0, 0, 200, 200);
+  clouds.show();
   // testPerson.draw();
   // console.log(mouseY);
   if (ambSound.isPlaying() === false){
