@@ -181,12 +181,12 @@ class Sun{
     if(hours < 12){
       size = map(hours, 0, 12, screenX*0.9, screenX/5);
       height = map(hours, 6, 13, screenY/2, screenY/10);
-      tintValue = map(hours, 0, 12, 150, 30);
+      tintValue = map(hours, 12, 24, 100, 200);
     }
     else{
       size = map(hours, 12, 24, screenX/5, screenX*0.9);
       height = map(hours, 13, 20, screenY/10, screenY/2);
-      tintValue = map(hours, 0, 12, 30, 150);
+      tintValue = map(hours, 0, 12, 200, 100);
     }
     console.log(size, height);
     // fill(0);
@@ -298,6 +298,10 @@ class Car{
     }
   }
 }
+
+// class Lamp{
+//
+// }
 
 const skinColors = [
   "#FFDFC4", "#F0D5BE", "#EECEB3",

@@ -16,69 +16,28 @@ var sunImage;
 var sun;
 
 function preload(){
-  carimage = loadImage("./car.png");
-  cloudimage = loadImage("./cloud.png");
-  sunImage = loadImage("./sun.png");
+  carimage = loadImage("./images/car.png");
+  cloudimage = loadImage("./images/cloud.png");
+  sunImage = loadImage("./images/sun.png");
   ambSound = loadSound("./sounds/traffic.mp3");
 }
 
+
+
+var currentTime;
+
+function changeTime(time){
+  currentTime = time;
+  drawBackground();
+}
+
 function setup(){
+  currentTime = hour();
   ambSound.setVolume(0.19);
   ambSound.play();
-  let currentTime = hour();
-  // let currentTime = 10;
-  createBuildings();
-  setGradient(0, 0, screenX, screenY, color(184,125,138), color(138,116,165), 1);
-  let opasityOfNight = 0;
-  if(currentTime > 20 && currentTime < 25){
-    opasityOfNight = map(currentTime, 20, 24, 0, 255);
-  }
-  else if(currentTime > 0 && currentTime < 7){
-    opasityOfNight = map(currentTime, 20, 24, 255, 0);
-  }
-  fill(20, 24, 82, opasityOfNight);
-  rect(-1, -1, screenX, screenY);
-  stars = new Stars();
-  stars.show();
-  let opasityOfDay;
-  if(currentTime > 6 && currentTime < 13){
-    opasityOfDay = map(currentTime, 6, 13, 0, 255);
-    // console.log(opasityOfDay);
-  }
-  else if(currentTime > 13 && currentTime < 21){
-    opasityOfDay = map(currentTime, 13, 21, 255, 0);
-  }
-  fill(135-40,206-40,235-40, opasityOfDay);
-  rect(-1, -1, screenX, screenY);
-  // clouds = new Clouds(cloudimage, true);
-  // setGradient(0, 0, screenX, screenY, color(135-40,206-40,235-40, opasityOfDay), color(135-40,206-40,250-40, opasityOfDay), 1);
-  sun = new Sun();
-  sun.show(currentTime, sunImage);
-  for(let i = 0; i < frontBuildings.length; i++){
-    backBuildings[i].show();
-  }
-  for(let i = 0; i < frontBuildings.length; i++){
-    frontBuildings[i].show();
-  }
-  road = new Road();
-  road.show();
-  car1 = new Car(carimage, true);
-  car2 = new Car(carimage, false);
-
-  for(let i = 0; i < 20; i++){
-    peopleOnTopSidewalk[i] = new Person(random(0, screenX), road.sidewalkY1 + 5, road.sidewalkY1 + road.h);
-  }
-  for(let i = 0; i < 20; i++){
-    peopleOnBottomSidewalk[i] = new Person(random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h);
-  }
-  // image(sunImage, 0, 0, 1000, 1000);
-  let millisecond = millis();
-  fill(0);
-  let curHour = hour();
-  let curMinutes = minute();
-  text(`${curHour}:${curMinutes}`, 0, 0, 200, 200);
-
+  drawBackground();
 }
+
 function draw(){
   for(let i = 0; i < frontBuildings.length; i++){
     backBuildings[i].simpleShow();
@@ -103,10 +62,69 @@ function draw(){
   }
 }
 
+function drawBackground(){
+  createBuildings();
+  setGradient(0, 0, screenX, screenY, color(184,125,138), color(138,116,165), 1);
+  let opasityOfNight = 0;
+  if(currentTime > 20 && currentTime < 25){
+    opasityOfNight = map(currentTime, 20, 24, 0, 255);
+  }
+  else if(currentTime > -1 && currentTime < 7){
+    opasityOfNight = map(currentTime, 0, 7, 255, 0);
+  }
+  console.log("night op: " + opasityOfNight);
+  fill(20, 24, 82, opasityOfNight);
+  rect(-1, -1, screenX, screenY);
+  stars = new Stars();
+  stars.show();
+  let opasityOfDay;
+  if(currentTime > 6 && currentTime < 13){
+    opasityOfDay = map(currentTime, 6, 13, 0, 255);
+    // console.log(opasityOfDay);
+  }
+  else if(currentTime > 12 && currentTime < 21){
+    opasityOfDay = map(currentTime, 13, 21, 255, 0);
+  }
+  else{
+    opasityOfDay = 0;
+  }
+  console.log("day op: " + opasityOfDay);
+  fill(95, 166, 195, opasityOfDay);
+  rect(-1, -1, screenX, screenY);
+  // clouds = new Clouds(cloudimage, true);
+  // setGradient(0, 0, screenX, screenY, color(135-40,206-40,235-40, opasityOfDay), color(135-40,206-40,250-40, opasityOfDay), 1);
+  sun = new Sun();
+  sun.show(currentTime, sunImage);
+  for(let i = 0; i < frontBuildings.length; i++){
+    backBuildings[i].show();
+  }
+  for(let i = 0; i < frontBuildings.length; i++){
+    frontBuildings[i].show();
+  }
+  road = new Road();
+  road.show();
+  car1 = new Car(carimage, true);
+  car2 = new Car(carimage, false);
+  for(let i = 0; i < 20; i++){
+    peopleOnTopSidewalk[i] = new Person(random(0, screenX), road.sidewalkY1 + 5, road.sidewalkY1 + road.h);
+  }
+  for(let i = 0; i < 20; i++){
+    peopleOnBottomSidewalk[i] = new Person(random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h);
+  }
+  // image(sunImage, 0, 0, 1000, 1000);
+  // let millisecond = millis();
+  // fill(0);
+  // let curHour = hour();
+  // let curMinutes = minute();
+  // text(`${curHour}:${curMinutes}`, 0, 0, 200, 200);
+}
+
 function createBuildings(){
   totalYoffset = (screenY * 1.2)/10;
   let bby = screenY - totalYoffset;
   let fby = screenY - totalYoffset;
+  backBuildings = [];
+  frontBuildings = [];
   createCanvas(window.innerWidth, window.innerHeight);
   backBuildings.push(new BackBuilding(0, bby));
   for(let i = 0; i < (screenX / ((6+3)/2)); i++){
