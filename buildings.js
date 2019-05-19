@@ -160,16 +160,39 @@ class Stars{
   }
 
 }
+//
+// class Clouds{
+//   constructor(cloudimg, show){
+//     this.cloudimg = cloudimg;
+//     this.show = show;
+//     this.heaviness = 4;//number of formations
+//     this.bulk = 4;//number of clouds per formation
+//   }
+//   show(){
+//     image(this.cloudimg, mouseX, mouseY, 200, 200);
+//   }
+// }
 
-class Clouds{
-  constructor(cloudimg, show){
-    this.cloudimg = cloudimg;
-    this.show = show;
-    this.heaviness = 4;//number of formations
-    this.bulk = 4;//number of clouds per formation
-  }
-  show(){
-    image(this.cloudimg, mouseX, mouseY, 200, 200);
+class Sun{
+  show(hours, sunimg){
+    let size;
+    let height;
+    let tintValue;
+    if(hours < 12){
+      size = map(hours, 0, 12, screenX*0.9, screenX/5);
+      height = map(hours, 6, 13, screenY/2, screenY/10);
+      tintValue = map(hours, 0, 12, 150, 30);
+    }
+    else{
+      size = map(hours, 12, 24, screenX/5, screenX*0.9);
+      height = map(hours, 13, 20, screenY/10, screenY/2);
+      tintValue = map(hours, 0, 12, 30, 150);
+    }
+    console.log(size, height);
+    // fill(0);
+    // rect(height, height, 200, 200);
+    tint(255, tintValue);
+    image(sunimg, height, height, size, size);
   }
 }
 
