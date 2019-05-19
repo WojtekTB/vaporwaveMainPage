@@ -50,7 +50,7 @@
       function onSliderChange(e) {
         const newValue = parseInt(e.target.value, 10);
         changeTime(newValue);
-        console.log(newValue);
+        // console.log(newValue);
         timeTextElement.innerHTML = `${newValue}:${("0" + date.getMinutes()).slice(-2)}`
       }
       const rangeElement = document.getElementById('ui-hour');

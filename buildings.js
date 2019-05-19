@@ -1,5 +1,6 @@
 const colorScheme = {
   fbColor: [121, 142, 176],
+  fbWinColor: [122, 155, 189],
   bbColor: [158,136,158],
   bbWinColor: [165,143,165]
 }
@@ -30,16 +31,37 @@ class FrontBuilding{
     // console.log(this.windows[0][2]);
     // console.log({x: this.x, y: this.y, w: this.buildingWidth, h: this.buildingHeight, WandH: this.windowWandH});
   }
+
+  changeColor(){
+    let opasityOfDay;
+    if(currentTime < 12){
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, -60, 10));
+    }
+    else{
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 10, -60));
+    }
+    this.currentBuildingColor = [];
+    this.currentWindowColor = [];
+    for(let i = 0; i < 3; i++){
+      this.currentBuildingColor[i] = this.colorScheme.fbColor[i] + opasityOfDay;
+    }
+    for(let i = 0; i < 3; i++){
+      this.currentWindowColor[i] = this.colorScheme.fbWinColor[i] + opasityOfDay;
+    }
+    // console.log(opasityOfDay);
+  }
+
   show(){
+    this.changeColor();
     noStroke();
-    fill(this.colorScheme.fbColor);
+    fill(this.currentBuildingColor);
     rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
     if(this.buildingWidth > 3 * this.scale){
       if(this.roofGlow === 0){
-        fill(255,130,170);
+        fill(this.currentBuildingColor);
         rect(this.x + random(10, 2*this.scale), this.y - this.buildingHeight+1, 2, -5);
       }
-      fill(this.colorScheme.fbColor);
+      fill(this.currentBuildingColor);
       rect(this.x + 5, this.y - this.buildingHeight+1, this.buildingWidth - 10, -3);
     }
     for(let i = 0; i < this.windows.length; i++){
@@ -53,7 +75,7 @@ class FrontBuilding{
       //   fill(this.colorScheme.fbColor);
       // }
       else{
-        fill(122, 155, 189);
+        fill(this.currentWindowColor);
       }
       rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
     }
@@ -61,7 +83,7 @@ class FrontBuilding{
 
   simpleShow(){
     noStroke();
-    fill(this.colorScheme.fbColor);
+    fill(this.currentBuildingColor);
     rect(this.x, this.y - 20, this.buildingWidth, 20);
   }
   update(){}
@@ -89,13 +111,18 @@ class BackBuilding{
           (this.windowPadding * 3.5) + (this.windowWandH * x) + (2 * this.windowPadding * x)]);
       }
     }
-    let currentTime = hour();
+    this.changeColor();
+    // console.log(this.windows[0][2]);
+    // console.log({x: this.x, y: this.y, w: this.buildingWidth, h: this.buildingHeight, WandH: this.windowWandH});
+  }
+
+  changeColor(){
     let opasityOfDay;
-    if(currentTime > 12){
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, 0, 5));
+    if(currentTime < 12){
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, -60, 10));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 5, 0));
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 10, -60));
     }
     this.currentBuildingColor = [];
     this.currentWindowColor = [];
@@ -105,11 +132,11 @@ class BackBuilding{
     for(let i = 0; i < 3; i++){
       this.currentWindowColor[i] = this.colorScheme.bbWinColor[i] + opasityOfDay;
     }
-
-    // console.log(this.windows[0][2]);
-    // console.log({x: this.x, y: this.y, w: this.buildingWidth, h: this.buildingHeight, WandH: this.windowWandH});
+    // console.log(opasityOfDay);
   }
+
   show(){
+    this.changeColor();
     noStroke();
     // console.log(this.colorScheme.bbColor);
     // console.log(this.currentBuildingColor);
@@ -188,7 +215,7 @@ class Sun{
       height = map(hours, 13, 20, screenY/10, screenY/2);
       tintValue = map(hours, 0, 12, 200, 100);
     }
-    console.log(size, height);
+    // console.log(size, height);
     // fill(0);
     // rect(height, height, 200, 200);
     tint(255, tintValue);
@@ -205,6 +232,18 @@ class Road{
     this.perspectiveOffset = 15;
     this.sidewalkY1 = this.y;
     this.sidewalkY2 = this.y + ((screenY * 1.2)/10) - this.h;
+    this.howDark = 255;
+  }
+
+  changeTint(){
+    let opasityOfDay;
+    if(currentTime < 12){
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 45, 0));
+    }
+    else{
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, 0, 45));
+    }
+    this.howDark = opasityOfDay;
   }
 
   showSidewalk(yOffset){
@@ -234,11 +273,14 @@ class Road{
   }
 
   show(){
+    this.changeTint();
     fill(147,112,190);
     rect(0, this.y, screenX, screenY/3);
     this.showSidewalk(0);
     this.showRoad();
     this.showSidewalk(((screenY * 1.2)/10) - this.h);
+    fill(0, 0, 0, this.howDark);
+    rect(-1, this.y, screenX, screenY - this.y);
   }
 }
 
@@ -259,6 +301,7 @@ class Car{
     this.speed = random(1, 3);
     this.roadLength = random(2,4);
     this.movingRight = right;
+    this.howDark = 255;
   }
 
   // drawCarShape(impx, impy, scale){
@@ -274,8 +317,21 @@ class Car{
   //   // vertex(impx+(4 * scale), (impy-(4 * scale)));
   //   // endShape(CLOSE);
   // }
+
+  changeTint(){
+    let opasityOfDay;
+    if(currentTime < 12){
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, 200, 255));
+    }
+    else{
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 255, 200));
+    }
+    this.howDark = opasityOfDay;
+  }
+
   show(){
-    tint(255, 240)
+    this.changeTint();
+    tint(this.howDark, 240)
     if(this.movingRight){
       image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
       this.x += this.speed;
@@ -303,18 +359,33 @@ class Car{
 //
 // }
 
-const skinColors = [
+const skinColorsHex = [
   "#FFDFC4", "#F0D5BE", "#EECEB3",
   "#E1B899", "#E5C298", "#FFDCB2",
-  "#E5B887", "#E5A073", "#E79E6D",
+  "#E5B887", "#E79E6D",
   "#DB9065", "#CE967C", "#C67856",
   "#BA6C49", "#A57257", "#F0C8C9",
   "#DDA8A0", "#B97C6D", "#A8756C",
   "#AD6452"
 ]
-const shirtColors = [
+
+const skinColors = [
+  [255, 223, 196], [240, 213, 190], [238, 206, 179],
+  [225, 184, 153], [229, 194, 152], [255, 220, 178],
+  [229, 184, 135], [231, 158, 109], [219, 144, 101],
+  [206, 150, 124], [198, 120, 86], [186, 108, 73],
+  [165, 114, 87], [240, 200, 201], [221, 168, 160],
+  [185, 124, 109], [168, 117, 108], [173, 100, 82]
+]
+
+const shirtColorsHex = [
   "#FF6AD5", "#C774E8", "#AD8CFF",
   "#8795E8", "#94D0FF"
+]
+
+const shirtColors = [
+  [255, 106, 213], [199, 116, 232], [173, 140, 255],
+  [135, 149, 232], [148, 208, 255]
 ]
 
 
@@ -325,8 +396,18 @@ class Person{
     this.direction = Math.floor(random(0, 180));//direction person faces on spawn
     this.movementSpeed = 1;//how fast person moves around
     this.floorY = floorY;//floor for the person/lowest point it can go to
-    this.shirtColor = shirtColors[Math.floor(random(0, shirtColors.length))];//pick skin and shirt colors
-    this.skinColor = skinColors[Math.floor(random(0, skinColors.length))];
+    this.shirtnum = Math.floor(random(0, shirtColors.length));
+    this.skinnum = Math.floor(random(0, skinColors.length));
+    this.shirtColor = [];
+    this.skinColor = [];
+    // let placeholder = shirtColors[this.shirtnum];
+    // placeholder[0] -= 3;
+    // placeholder[1] -= 3;
+    // placeholder[2] -= 3;
+    // this.shirtColor = placeholder;//pick skin and shirt colors
+    this.skinColor = skinColors[this.skinnum];
+    // console.log(this.skinColor);
+    this.changeTint();
 
     this.timing = Math.floor(random(5, 9));
 
@@ -343,6 +424,35 @@ class Person{
     this.movementX;
     // this.movementY;
     this.changeAction();
+  }
+
+  changeTint(){
+    let opasityOfDay = 0;
+    if(currentTime < 12){
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, 5, 0));
+    }
+    else{
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 0, 5));
+    }
+    for(let i = 0; i < 3; i++){
+      // console.log(this.skinColor[i] === skinColors[this.skinnum][i]);
+      // console.log(this.skinColor[i] - (opasityOfDay/2) === skinColors[this.skinnum][i] - (opasityOfDay/2));
+      console.log(opasityOfDay);
+      this.skinColor[i] = skinColors[this.skinnum][i];
+    }
+    for(let i = 0; i < 3; i++){
+      this.shirtColor[i] = (shirtColors[this.shirtnum])[i];
+    }
+    // for(let i = 0; i < 3; i++){
+    //   console.log(skinColors[this.skinnum][i]);
+    //   this.skinColor[i] = skinColors[this.skinnum][i];
+    //   // console.log(skinColors);
+    //   console.log(i);
+    // }
+    // for(let i = 0; i < 3; i++){
+    //   this.shirtColor[i] = shirtColors[this.shirtnum][i];
+    // }
+
   }
 
   changeAction(){
@@ -383,8 +493,18 @@ class Person{
     let myScale = 0.75;
     fill(this.skinColor);
     rect(x, y - (myScale*(30)), 10 * myScale, 10 * myScale);
-    fill(this.shirtColor);
+    let opasityOfDay = 0;
+    if(currentTime < 12){
+      opasityOfDay = Math.floor(map(currentTime, 0, 12, 120, 0));
+    }
+    else{
+      opasityOfDay = Math.floor(map(currentTime, 12, 24, 0, 120));
+    }
+    fill(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
+    console.log(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
     rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
+    // fill(0, 0, 0, opasityOfDay);
+    // rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
   }
 
   draw(){

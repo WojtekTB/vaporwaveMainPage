@@ -39,28 +39,62 @@ function setup(){
 }
 
 function draw(){
+  drawLayer1();
+  drawLayer2();
+  drawLayer3();
+  drawLayer4();
+  drawLayer5();
+  if (ambSound.isPlaying() === false){
+    ambSound.play();
+  }
+}
+
+function hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+function drawLayer1(){
   for(let i = 0; i < frontBuildings.length; i++){
     backBuildings[i].simpleShow();
   }
   for(let i = 0; i < frontBuildings.length; i++){
     frontBuildings[i].simpleShow();
   }
+}
+
+function drawLayer2(){
   road.show();
-  car2.show();
+}
+
+function drawLayer3(){
   for(let i = 0; i < 20; i++){
     peopleOnTopSidewalk[i].draw();
   }
+}
+
+function drawLayer4(){
+  car1.show();
+  car2.show();
+}
+
+function drawLayer5(){
   for(let i = 0; i < 20; i++){
     peopleOnBottomSidewalk[i].draw();
   }
-  car1.show();
-  // clouds.show();
-  // testPerson.draw();
-  // console.log(mouseY);
-  if (ambSound.isPlaying() === false){
-    ambSound.play();
-  }
 }
+
+// function drawLayer3(){}
 
 function drawBackground(){
   createBuildings();
@@ -72,7 +106,7 @@ function drawBackground(){
   else if(currentTime > -1 && currentTime < 7){
     opasityOfNight = map(currentTime, 0, 7, 255, 0);
   }
-  console.log("night op: " + opasityOfNight);
+  // console.log("night op: " + opasityOfNight);
   fill(20, 24, 82, opasityOfNight);
   rect(-1, -1, screenX, screenY);
   stars = new Stars();
@@ -88,7 +122,7 @@ function drawBackground(){
   else{
     opasityOfDay = 0;
   }
-  console.log("day op: " + opasityOfDay);
+  // console.log("day op: " + opasityOfDay);
   fill(95, 166, 195, opasityOfDay);
   rect(-1, -1, screenX, screenY);
   // clouds = new Clouds(cloudimage, true);
@@ -105,11 +139,13 @@ function drawBackground(){
   road.show();
   car1 = new Car(carimage, true);
   car2 = new Car(carimage, false);
+  peopleOnTopSidewalk = [];
+  peopleOnBottomSidewalk = [];
   for(let i = 0; i < 20; i++){
-    peopleOnTopSidewalk[i] = new Person(random(0, screenX), road.sidewalkY1 + 5, road.sidewalkY1 + road.h);
+    peopleOnTopSidewalk.push(new Person(random(0, screenX), road.sidewalkY1 + 5, road.sidewalkY1 + road.h));
   }
   for(let i = 0; i < 20; i++){
-    peopleOnBottomSidewalk[i] = new Person(random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h);
+    peopleOnBottomSidewalk.push(new Person(random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h));
   }
   // image(sunImage, 0, 0, 1000, 1000);
   // let millisecond = millis();
