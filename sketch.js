@@ -44,6 +44,11 @@ function draw(){
   drawLayer3();
   drawLayer4();
   drawLayer5();
+  if (mouseIsPressed) {
+      if (mouseButton === LEFT) {
+        
+      }
+    }
   if (ambSound.isPlaying() === false){
     ambSound.play();
   }
@@ -92,9 +97,14 @@ function drawLayer5(){
   for(let i = 0; i < 20; i++){
     peopleOnBottomSidewalk[i].draw();
   }
+
+  let fps = frameRate();
+  fill(255);
+  // stroke(0);
+  text("FPS: " + fps.toFixed(2), 5, height - 10);
 }
 
-// function drawLayer3(){}
+
 
 function drawBackground(){
   createBuildings();
