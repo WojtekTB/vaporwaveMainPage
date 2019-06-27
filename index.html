@@ -26,6 +26,18 @@
       top: 0px;
       text-align: right;
     }
+    #backCanvas {
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      /* text-align: right; */
+    }
+    #frontCanvas {
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      /* text-align: right; */
+    }
 
     #ui-hour{
       width: 10vw;
@@ -41,6 +53,8 @@
     <script src="buildings.js"></script>
   </head>
   <body>
+    <div id=backCanvas></div>
+    <div id=frontCanvas></div>
     <div id="ui">
       <h1 id="timeText" style="font-family:Tahoma; font-size:3vw"></h1>
       <input id="ui-hour" type="range" min="0" max="23" step="1"/>
@@ -49,7 +63,7 @@
     const date = new Date()
       function onSliderChange(e) {
         const newValue = parseInt(e.target.value, 10);
-        changeTime(newValue);
+        backgroundCanvas.changeTime(newValue);
         // console.log(newValue);
         timeTextElement.innerHTML = `${newValue}:${("0" + date.getMinutes()).slice(-2)}`
       }

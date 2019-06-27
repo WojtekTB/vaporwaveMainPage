@@ -1,3 +1,139 @@
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+
+class Building{
+  constructor(x, y, color, winColor){
+    const permutations = {
+      builType: 1,
+      roofType: 3,
+      winType: 3,
+      winLitFreq: 1,
+      builAtt: 2,
+      mainAcc1: 1,
+      mainAcc2: 1,
+      attAcc1: 1,
+      attAcc2: 1
+    }
+    this.x = x;
+    this.y = y;
+    this.width = getRandomInt(90, 130);
+    this.height = getRandomInt(200, 300);
+    this.color = [5, 20, 27];
+    this.winColor = [10, 40, 48];
+    this.seed = [
+                getRandomInt(1, permutations.builType),
+                getRandomInt(1, permutations.roofType),
+                getRandomInt(1, permutations.winType),
+                getRandomInt(1, permutations.winLitFreq),
+                getRandomInt(1, permutations.builAtt),
+                getRandomInt(1, permutations.mainAcc1),
+                getRandomInt(1, permutations.mainAcc2),
+                getRandomInt(1, permutations.attAcc1),
+                getRandomInt(1, permutations.attAcc2)
+                ];
+    //type of windows, frequency of lit up windows, building attatchments, accessories1, accessories2, attatchment building accessories1, attatchment building accessories2
+  }
+
+  draw(){
+    this.drawBuilding();
+    this.drawRoof();
+    this.drawWindows();
+    this.drawBuildingAttatchments();
+  }
+
+  drawBuilding(){
+    if(this.seed[0] == 1){//if building type 0, simple rectangle
+      fill(this.color[0], this.color[1], this.color[2]);
+      rect(this.x, this.y - this.height, this.width, this.height);
+    }
+  }
+  drawRoof(){
+    if(this.seed[1] == 2){//roof with a roof exit door
+      //skip to 2 because 1 is just flat roof
+      fill(this.color[0], this.color[1], this.color[2]);
+      rect(this.x + getRandomInt(0, (this.width * 2)/3), this.y - this.height - 20, this.width/3, 20);
+    }
+    else if(this.seed[1] == 3){//railing
+      fill(this.color[0], this.color[1], this.color[2]);
+      rect(this.x, this.y - this.height - 6, this.width, 2);
+
+      let railSpacing = 3;
+      let railWidth = 2
+      let numOfRails = this.width/(railWidth+railSpacing)
+      for(let i = 0; i < numOfRails-1; i++){
+        rect(this.x + ((railSpacing+railWidth)*i), this.y - this.height, railWidth, -6);
+      }
+      rect(this.x + this.width - railWidth, this.y - this.height, railWidth, -6);
+    }
+  }
+  drawWindows(){
+    this.drawAttWindows(this.x, this.y, this.width, this.height, 8);
+  }
+
+  drawBuildingAttatchments(){
+    if(this.seed[4] == 2){//square to the right
+      //skip to 2 because 1 is not attatchments
+      let attHeight = (this.height*2)/3;
+      let attWidth = getRandomInt((this.width * 5)/3, this.width*2) ;
+      let attX = this.x;
+      let attY = this.y;
+      fill(this.color[0], this.color[1], this.color[2]);
+      rect(attX, attY, attWidth, -attHeight);
+      this.drawAttWindows(attX, attY, attWidth, attHeight, 5);
+    }
+  }
+
+  drawAttWindows(inputX, inputY, inputWidth, inputHeight, topPadd){
+    if(this.seed[2] == 1){//standard square evenly spaced windows but with windows split in two
+      fill(this.winColor[0], this.winColor[1], this.winColor[2]);
+      let winWidth = 10;
+      let padding = 8;
+      let spacing = 3;
+      let numbOfWinPerRow = (inputWidth - (padding*2))/(winWidth+spacing+1);
+      let numbOfWinPerCol = (inputHeight - (padding*2))/(winWidth+spacing) - 2;
+      for(let j = 0; j < numbOfWinPerCol; j++){
+        for(let i = 0; i < numbOfWinPerRow; i++){
+          rect(inputX + padding + (i*(winWidth+spacing)), (inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, winWidth, winWidth);
+        }
+      }
+    }
+    else if(this.seed[2] == 2){//standard square evenly spaced windows but with windows split in two horizontally
+      fill(this.winColor[0], this.winColor[1], this.winColor[2]);
+      let winWidth = 15;
+      let padding = 10;
+      let spacing = 5;
+      let numbOfWinPerRow = (inputWidth - (padding*2))/(winWidth+spacing+1);
+      let numbOfWinPerCol = (inputHeight - (padding*2))/(winWidth+spacing) - 2;
+      for(let j = 0; j < numbOfWinPerCol; j++){
+        for(let i = 0; i < numbOfWinPerRow; i++){
+          rect(inputX + padding + (i*(winWidth+spacing)),( inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, ((winWidth - 4)/2), winWidth);
+          rect((inputX + padding + (i*(winWidth+spacing))) + ((winWidth - 4)/2) + 2, (inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, ((winWidth - 4)/2), winWidth);
+        }
+      }
+    }
+    else if(this.seed[2] == 3){//standard square evenly spaced windows but with windows split in two vertically
+      fill(this.winColor[0], this.winColor[1], this.winColor[2]);
+      let winWidth = 15;
+      let padding = 10;
+      let spacing = 5;
+      let numbOfWinPerRow = (inputWidth - (padding*2))/(winWidth+spacing);
+      let numbOfWinPerCol = (inputHeight - (padding*2))/(winWidth+spacing) - 2;
+      for(let j = 0; j < numbOfWinPerCol; j++){
+        for(let i = 0; i < numbOfWinPerRow; i++){
+          rect(inputX + padding + (i*(winWidth+spacing)), (inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, winWidth-1, (winWidth - 4)/2);
+          rect(inputX + padding + (i*(winWidth+spacing)), (inputY + (j*(winWidth+spacing)) + ((winWidth - 4)/2) - inputHeight + 2 ) + topPadd, winWidth -1, (winWidth - 4)/2);
+        }
+      }
+    }
+  }
+
+}
+
 const colorScheme = {
   fbColor: [121, 142, 176],
   fbWinColor: [122, 155, 189],
@@ -15,9 +151,9 @@ class FrontBuilding{
     this.x = x;
     this.y = y;
     this.colorScheme = colorScheme;
-    this.buildingHeight = Math.floor(random(minHeight, maxHeight)) * this.scale;
-    this.buildingWidth = Math.floor(random(minWidth, maxWidth)) * this.scale;
-    this.roofGlow = Math.floor(random(0, 4));
+    this.buildingHeight = getRandomInt(minHeight, maxHeight) * this.scale;
+    this.buildingWidth = getRandomInt(minWidth, maxWidth) * this.scale;
+    this.roofGlow = getRandomInt(0, 4);
 
     this.windowPadding = (this.scale/5);
     this.windowWandH = this.scale - (this.windowPadding * 2);
@@ -25,7 +161,7 @@ class FrontBuilding{
     for(let y = 0; y < (Math.floor((this.buildingHeight - (2 * this.scale))/this.scale)); y++){
       for(let x = 0; x < Math.floor((this.buildingWidth-this.scale)/this.scale); x++){
         this.windows.push([(((this.windowPadding * 2) * y) + (this.windowWandH * y) + this.windowPadding),
-          (this.windowPadding * 3.5) + (this.windowWandH * x) + (2 * this.windowPadding * x), Math.floor(random(0, 150))]);
+          (this.windowPadding * 3.5) + (this.windowWandH * x) + (2 * this.windowPadding * x), getRandomInt(0, 150)]);
       }
     }
     // console.log(this.windows[0][2]);
@@ -35,10 +171,10 @@ class FrontBuilding{
   changeColor(){
     let opasityOfDay;
     if(currentTime < 12){
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, -60, 10));
+      opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 0, 12, -60, 10));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 10, -60));
+      opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 12, 24, 10, -60));
     }
     this.currentBuildingColor = [];
     this.currentWindowColor = [];
@@ -53,39 +189,34 @@ class FrontBuilding{
 
   show(){
     this.changeColor();
-    noStroke();
-    fill(this.currentBuildingColor);
-    rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
+    backgroundCanvas.noStroke();
+    backgroundCanvas.fill(this.currentBuildingColor);
+    backgroundCanvas.rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
     if(this.buildingWidth > 3 * this.scale){
       if(this.roofGlow === 0){
-        fill(this.currentBuildingColor);
-        rect(this.x + random(10, 2*this.scale), this.y - this.buildingHeight+1, 2, -5);
+        backgroundCanvas.fill(this.currentBuildingColor);
+        backgroundCanvas.rect(this.x + backgroundCanvas.random(10, 2*this.scale), this.y - this.buildingHeight+1, 2, -5);
       }
-      fill(this.currentBuildingColor);
-      rect(this.x + 5, this.y - this.buildingHeight+1, this.buildingWidth - 10, -3);
+      backgroundCanvas.fill(this.currentBuildingColor);
+      backgroundCanvas.rect(this.x + 5, this.y - this.buildingHeight+1, this.buildingWidth - 10, -3);
     }
     for(let i = 0; i < this.windows.length; i++){
       if(this.windows[i][2] === 0){
-        fill(179,196,161);
+        backgroundCanvas.fill(179,196,161);
       }
       else if(this.windows[i][2] === 1){
-        fill(153,206,251);
+        backgroundCanvas.fill(153,206,251);
       }
       // else if(this.windows[i][2] === 3){
       //   fill(this.colorScheme.fbColor);
       // }
       else{
-        fill(this.currentWindowColor);
+        backgroundCanvas.fill(this.currentWindowColor);
       }
-      rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
+      backgroundCanvas.rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
     }
   }
 
-  simpleShow(){
-    noStroke();
-    fill(this.currentBuildingColor);
-    rect(this.x, this.y - 20, this.buildingWidth, 20);
-  }
   update(){}
 }
 
@@ -99,8 +230,8 @@ class BackBuilding{
     this.x = x;
     this.y = y;
     this.colorScheme = colorScheme;
-    this.buildingHeight = Math.floor(random(minHeight, maxHeight)) * this.scale;
-    this.buildingWidth = Math.floor(random(minWidth, maxWidth)) * this.scale;
+    this.buildingHeight = getRandomInt(minHeight, maxHeight) * this.scale;
+    this.buildingWidth = getRandomInt(minWidth, maxWidth) * this.scale;
 
     this.windowPadding = (this.scale/5);
     this.windowWandH = this.scale - (this.windowPadding * 2);
@@ -119,10 +250,10 @@ class BackBuilding{
   changeColor(){
     let opasityOfDay;
     if(currentTime < 12){
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, -60, 10));
+      opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 0, 12, -60, 10));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 10, -60));
+      opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 12, 24, 10, -60));
     }
     this.currentBuildingColor = [];
     this.currentWindowColor = [];
@@ -137,22 +268,19 @@ class BackBuilding{
 
   show(){
     this.changeColor();
-    noStroke();
+    backgroundCanvas.noStroke();
     // console.log(this.colorScheme.bbColor);
     // console.log(this.currentBuildingColor);
-    fill(this.currentBuildingColor);
-    rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
+    backgroundCanvas.fill(this.currentBuildingColor);
+    backgroundCanvas.rect(this.x, this.y - this.buildingHeight, this.buildingWidth, this.buildingHeight);
     for(let i = 0; i < this.windows.length; i++){
-      fill(this.currentWindowColor);
+      backgroundCanvas.fill(this.currentWindowColor);
       // console.log(this.windows[i][2]);
-      rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
+      backgroundCanvas.rect(this.windows[i][1] + this.x, this.windows[i][0] + this.y - this.buildingHeight + this.windowPadding, this.windowWandH, this.windowWandH);
     }
   }
 
-  simpleShow(){
-    fill(this.currentBuildingColor);
-    rect(this.x, this.y - 20, this.buildingWidth, 20);
-  }
+
 }
 
 let starColors = {
@@ -166,26 +294,28 @@ class Stars{
     this.numberOfStars = 100;
     this.stars = [];
     for(let i = 0; i < this.numberOfStars; i++){
-      this.stars.push([random((screenX)/30, (screenX*29)/30), random((screenY)/30, (screenY * 29)/30 - totalYoffset*2), Math.floor(random(1, 4))]);//x, y, color
+      this.stars.push([backgroundCanvas.random((screenX)/30, (screenX*29)/30), backgroundCanvas.random((screenY)/30, (screenY * 29)/30 - totalYoffset*2), Math.floor(backgroundCanvas.random(1, 4))]);//x, y, color
     }
   }
 
-  show(){
-    for(let i = 0; i < this.numberOfStars; i++){
-      noStroke();
-      if(this.stars[i][2] === 1){
-        fill(starColors.c1);
+  show(time){
+    console.log(time);
+    if(time <= 7 || time >= 19){
+      for(let i = 0; i < this.numberOfStars; i++){
+        backgroundCanvas.noStroke();
+        if(this.stars[i][2] === 1){
+          backgroundCanvas.fill(starColors.c1);
+        }
+        else if(this.stars[i][2] === 2){
+          backgroundCanvas.fill(starColors.c2);
+        }
+        else if(this.stars[i][2] === 3){
+          backgroundCanvas.fill(starColors.c3);
+        }
+        backgroundCanvas.rect(this.stars[i][0], this.stars[i][1], 2, 4);
       }
-      else if(this.stars[i][2] === 2){
-        fill(starColors.c2);
-      }
-      else if(this.stars[i][2] === 3){
-        fill(starColors.c3);
-      }
-      rect(this.stars[i][0], this.stars[i][1], 2, 4);
     }
   }
-
 }
 //
 // class Clouds{
@@ -206,25 +336,24 @@ class Sun{
     let height;
     let tintValue;
     if(hours < 12){
-      size = map(hours, 0, 12, screenX*0.9, screenX/5);
-      height = map(hours, 6, 13, screenY/2, screenY/10);
-      tintValue = map(hours, 12, 24, 100, 200);
+      size = backgroundCanvas.map(hours, 0, 12, screenX/4, screenX/2);
+      height = backgroundCanvas.map(hours, 0, 12, screenX/2 , screenX/20);
+      tintValue = backgroundCanvas.map(hours, 0, 12, 100, 255);
     }
     else{
-      size = map(hours, 12, 24, screenX/5, screenX*0.9);
-      height = map(hours, 13, 20, screenY/10, screenY/2);
-      tintValue = map(hours, 0, 12, 200, 100);
+      let calculatedTime = 24 - hours;
+      size = backgroundCanvas.map(calculatedTime, 0, 12, screenX/4, screenX/2);
+      height = backgroundCanvas.map(calculatedTime, 0, 12, screenX/2, screenX/20);
+      tintValue = backgroundCanvas.map(calculatedTime, 0, 12, 100, 255);
     }
-    // console.log(size, height);
-    // fill(0);
-    // rect(height, height, 200, 200);
-    tint(255, tintValue);
-    image(sunimg, height, height, size, size);
+    backgroundCanvas.tint(255, tintValue);
+    backgroundCanvas.image(sunimg, height, height, size, size);
   }
 }
 
 class Road{
   constructor(){
+    let totalYoffset = (screenY * 1.2)/10;
     this.x = 0;
     this.y = screenY - totalYoffset;
     this.w = 25;
@@ -238,10 +367,10 @@ class Road{
   changeTint(){
     let opasityOfDay;
     if(currentTime < 12){
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 45, 0));
+      opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 12, 24, 45, 0));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, 0, 45));
+      opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 0, 12, 0, 45));
     }
     this.howDark = opasityOfDay;
   }
@@ -249,23 +378,23 @@ class Road{
   showSidewalk(yOffset){
     // strokeWeight(1);
     // stroke(10);
-    fill(156, 156, 168);
+    backgroundCanvas.fill(156, 156, 168);
     for(let i = 0; i < screenX/this.w + 1; i++){
-      quad(this.x - (this.w/2) + ((this.w + 2) * i), this.y + yOffset,
+      backgroundCanvas.quad(this.x - (this.w/2) + ((this.w + 2) * i), this.y + yOffset,
         this.x - (this.w/2) + this.w + ((this.w + 2) * i), this.y + yOffset,
         this.x - (this.w/2) + this.w + this.perspectiveOffset + ((this.w + 2) * i), this.y + this.h + yOffset,
         this.x - (this.w/2) + this.perspectiveOffset + ((this.w + 2) * i), this.y + this.h + yOffset);
     }
   }
   showRoad(yOffset){
-    fill(113, 97, 97);
-    quad(this.x, this.y+this.h,
+    backgroundCanvas.fill(113, 97, 97);
+    backgroundCanvas.quad(this.x, this.y+this.h,
       this.x + screenX, this.y+this.h,
       this.x + screenX, screenY - this.h,
       this.x, screenY - this.h);
-    fill(255, 229, 229);
+    backgroundCanvas.fill(255, 229, 229);
     for(let i = 0; i < screenX/this.w + 1; i++){
-      quad(this.x - (this.w/2) + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) - this.h/2,
+      backgroundCanvas.quad(this.x - (this.w/2) + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) - this.h/2,
         this.x - (this.w/2) + this.w*2 + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) - this.h/2,
         this.x - (this.w/2) + this.w*2 + this.perspectiveOffset + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) + this.h/2,
         this.x - (this.w/2) + this.perspectiveOffset + ((this.w + 100) * i), screenY - ((screenY - this.y)/2) + this.h/2);
@@ -274,20 +403,22 @@ class Road{
 
   show(){
     this.changeTint();
-    fill(147,112,190);
-    rect(0, this.y, screenX, screenY/3);
+    backgroundCanvas.fill(147,112,190);
+    backgroundCanvas.rect(0, this.y, screenX, screenY/3);
     this.showSidewalk(0);
     this.showRoad();
     this.showSidewalk(((screenY * 1.2)/10) - this.h);
-    fill(0, 0, 0, this.howDark);
-    rect(-1, this.y, screenX, screenY - this.y);
+    backgroundCanvas.fill(0, 0, 0, this.howDark);
+    backgroundCanvas.rect(-1, this.y, screenX, screenY - this.y);
   }
 }
 
 class Car{
   constructor(image, right){
     // this.x;
-    this.x = -image.width * random(1, 5);
+
+    let totalYoffset = (screenY * 1.2)/10;
+    this.x = -image.width * foregroundCanvas.random(1, 5);
     this.y = screenY - totalYoffset;
     if(right){
       this.y = screenY - totalYoffset;
@@ -298,8 +429,8 @@ class Car{
 
     this.image = image;
     this.scale = screenY * 0.00034965034965034965;
-    this.speed = random(1, 3);
-    this.roadLength = random(2,4);
+    this.speed = foregroundCanvas.random(1, 3);
+    this.roadLength = foregroundCanvas.random(2,4);
     this.movingRight = right;
     this.howDark = 255;
   }
@@ -321,36 +452,36 @@ class Car{
   changeTint(){
     let opasityOfDay;
     if(currentTime < 12){
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, 200, 255));
+      opasityOfDay = Math.floor(foregroundCanvas.map(currentTime, 0, 12, 200, 255));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 255, 200));
+      opasityOfDay = Math.floor(foregroundCanvas.map(currentTime, 12, 24, 255, 200));
     }
     this.howDark = opasityOfDay;
   }
 
   show(){
     this.changeTint();
-    tint(this.howDark, 240)
+    foregroundCanvas.tint(this.howDark, 240)
     if(this.movingRight){
-      image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
+      foregroundCanvas.image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
       this.x += this.speed;
       if(this.x > screenX*this.roadLength){
         this.x = -this.image.width
-        this.roadLength = random(2,4);
-        this.speed = random(1, 3);
+        this.roadLength = foregroundCanvas.random(2,4);
+        this.speed = foregroundCanvas.random(1, 3);
       }
     }
     else{
-      scale(-1, 1);
-      image(this.image, this.x - screenX, this.y, this.image.width * this.scale, this.image.height * this.scale);
+      foregroundCanvas.scale(-1, 1);
+      foregroundCanvas.image(this.image, this.x - screenX, this.y, this.image.width * this.scale, this.image.height * this.scale);
       this.x += this.speed;
       if(this.x > screenX*this.roadLength){
         this.x = -this.image.width
-        this.roadLength = random(2,4);
-        this.speed = random(1, 3);
+        this.roadLength = foregroundCanvas.random(2,4);
+        this.speed = foregroundCanvas.random(1, 3);
       }
-        scale(-1, 1);
+        foregroundCanvas.scale(-1, 1);
     }
   }
 }
@@ -392,12 +523,12 @@ const shirtColors = [
 class Person{
   constructor(startX, maxY, floorY){
     this.x = startX;
-    this.y = random(floorY, maxY);
-    this.direction = Math.floor(random(0, 180));//direction person faces on spawn
+    this.y = foregroundCanvas.random(floorY, maxY);
+    this.direction = Math.floor(foregroundCanvas.random(0, 180));//direction person faces on spawn
     this.movementSpeed = 1;//how fast person moves around
     this.floorY = floorY;//floor for the person/lowest point it can go to
-    this.shirtnum = Math.floor(random(0, shirtColors.length));
-    this.skinnum = Math.floor(random(0, skinColors.length));
+    this.shirtnum = Math.floor(foregroundCanvas.random(0, shirtColors.length));
+    this.skinnum = Math.floor(foregroundCanvas.random(0, skinColors.length));
     this.shirtColor = [];
     this.skinColor = [];
     // let placeholder = shirtColors[this.shirtnum];
@@ -409,7 +540,7 @@ class Person{
     // console.log(this.skinColor);
     this.changeTint();
 
-    this.timing = Math.floor(random(5, 9));
+    this.timing = Math.floor(foregroundCanvas.random(5, 9));
 
     this.personMovingXList = {
       movingRight: true,
@@ -429,15 +560,15 @@ class Person{
   changeTint(){
     let opasityOfDay = 0;
     if(currentTime < 12){
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, 5, 0));
+      opasityOfDay = Math.floor(foregroundCanvas.map(currentTime, 0, 12, 5, 0));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 0, 5));
+      opasityOfDay = Math.floor(foregroundCanvas.map(currentTime, 12, 24, 0, 5));
     }
     for(let i = 0; i < 3; i++){
       // console.log(this.skinColor[i] === skinColors[this.skinnum][i]);
       // console.log(this.skinColor[i] - (opasityOfDay/2) === skinColors[this.skinnum][i] - (opasityOfDay/2));
-      console.log(opasityOfDay);
+      // console.log(opasityOfDay);
       this.skinColor[i] = skinColors[this.skinnum][i];
     }
     for(let i = 0; i < 3; i++){
@@ -456,7 +587,7 @@ class Person{
   }
 
   changeAction(){
-    let placeholderX = Math.floor(random(0, 1.99));
+    let placeholderX = Math.floor(foregroundCanvas.random(0, 1.99));
     if(placeholderX === 0){
       this.personMovingX = this.personMovingXList.movingLeft;
     }
@@ -471,7 +602,7 @@ class Person{
     // else{
     //   this.personMovingY = this.personMovingYList.movingUp;
     // }
-    let placeholder = Math.floor(random(0, 1.99));
+    let placeholder = Math.floor(foregroundCanvas.random(0, 1.99));
     if(placeholder === 0){
       this.movementX = false;
     }
@@ -490,26 +621,27 @@ class Person{
   }
 
   drawPerson(x, y){
+    foregroundCanvas.noStroke();
     let myScale = 0.75;
-    fill(this.skinColor);
-    rect(x, y - (myScale*(30)), 10 * myScale, 10 * myScale);
+    foregroundCanvas.fill(this.skinColor);
+    foregroundCanvas.rect(x, y - (myScale*(30)), 10 * myScale, 10 * myScale);
     let opasityOfDay = 0;
     if(currentTime < 12){
-      opasityOfDay = Math.floor(map(currentTime, 0, 12, 120, 0));
+      opasityOfDay = Math.floor(foregroundCanvas.map(currentTime, 0, 12, 120, 0));
     }
     else{
-      opasityOfDay = Math.floor(map(currentTime, 12, 24, 0, 120));
+      opasityOfDay = Math.floor(foregroundCanvas.map(currentTime, 12, 24, 0, 120));
     }
-    fill(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
-    console.log(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
-    rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
+    foregroundCanvas.fill(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
+    // console.log(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
+    foregroundCanvas.rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
     // fill(0, 0, 0, opasityOfDay);
     // rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
   }
 
   draw(){
     this.drawPerson(this.x, this.y);
-    if((second()%this.timing === 0) === false){
+    if((foregroundCanvas.second()%this.timing === 0) === false){
       if(this.movementX === true){
         if(this.personMovingX === this.personMovingXList.movingLeft){
           this.x -= this.movementSpeed;
@@ -528,7 +660,7 @@ class Person{
       //   }
       // }
     }
-    if(second()%this.timing === 0){
+    if(foregroundCanvas.second()%this.timing === 0){
       this.changeAction();
     }
   }
