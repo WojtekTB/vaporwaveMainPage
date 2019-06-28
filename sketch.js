@@ -8,10 +8,14 @@ var totalYoffse;
 var clouds;
 var carimage;
 var cloudimage;
+var lampimage;
+var lightimage;
 var car1;
 var car2;//adding another car to move the other way
 var peopleOnTopSidewalk = [];
 var peopleOnBottomSidewalk = [];
+var lampsOnTopSidewalk = [];
+var lampsOnBottomSidewalk = [];
 var sunImage;
 var sun;
 
@@ -19,7 +23,7 @@ var defaultScreenPixels = [];
 
 var testBuild;
 
-
+var testlamp;
 
 var currentTime = 10;
 
@@ -39,7 +43,7 @@ var currentTime = 10;
 
 var backgroundSketch = function(p){
   p.preload = function(){
-    carimage = p.loadImage("./images/car.png");
+    carimage = p.loadImage("./images/bus.png");
     cloudimage = p.loadImage("./images/cloud.png");
     sunImage = p.loadImage("./images/sun.png");
     ambSound = p.loadSound("./sounds/traffic.mp3");
@@ -53,21 +57,27 @@ var backgroundSketch = function(p){
     p.drawLayer2();
   }
 
-  p.draw = function(){
-    // savePixels();
-    // if (p.mouseIsPressed) {
-      //     if (mouseButton === LEFT) {
-        //
-        //     }
-        //   }
-        if (ambSound.isPlaying() === false){
-          ambSound.play();
-        }
-      }
+  // p.draw = function(){
+  //   savePixels();
+  //   if (p.mouseIsPressed) {
+  //         if (mouseButton === LEFT) {
+  //
+  //           }
+  //         }
+  //       if (ambSound.isPlaying() === false){
+  //         ambSound.play();
+  //       }
+  //     }
 
       p.changeTime = function(time){
         currentTime = time;
         p.drawBackground();
+        for(let i = 0; i < screenX/300; i++){
+          lampsOnTopSidewalk[i].updateTime(currentTime);
+        }
+        for(let i = 0; i < screenX/100; i++){
+          lampsOnBottomSidewalk[i].updateTime(currentTime);
+        }
       }
 
       p.createBuildings = function(){
@@ -152,72 +162,103 @@ var backgroundSketch = function(p){
 
         }
 
-        var backgroundCanvas = new p5(backgroundSketch);
+var backgroundCanvas = new p5(backgroundSketch);
 
 
 
-        var foregroundSketch = function(p){
-          p.setup = function(){
-            let myCanvas = p.createCanvas(screenX, screenY);
-            myCanvas.parent("frontCanvas");
-            car1 = new Car(carimage, true);
-            car2 = new Car(carimage, false);
-            peopleOnTopSidewalk = [];
-            peopleOnBottomSidewalk = [];
-            let numOfPeople = 20;
-            if(currentTime <= 12){
-              numOfPeople = foregroundCanvas.map(currentTime, 0, 12, 3, 20);
-            }
-            else if(currentTime > 12){
-              numOfPeople = foregroundCanvas.map(currentTime, 13, 24, 20, 3);
-            }
+var foregroundSketch = function(p){
+  p.preload = function(){
+    lampimage = p.loadImage("./images/lamp.png");
+    lightimage = p.loadImage("./images/light.png");
+  }
+
+  p.setup = function(){
+    let myCanvas = p.createCanvas(screenX, screenY);
+    myCanvas.parent("frontCanvas");
+    car1 = new Car(carimage, true);
+    car2 = new Car(carimage, false);
+    peopleOnTopSidewalk = [];
+    peopleOnBottomSidewalk = [];
+    let numOfPeople = 20;
+    if(currentTime <= 12){
+      numOfPeople = foregroundCanvas.map(currentTime, 0, 12, 3, 20);
+    }
+    else if(currentTime > 12){
+      numOfPeople = foregroundCanvas.map(currentTime, 13, 24, 20, 3);
+    }
 
 
-            road = new Road();
+    road = new Road();
 
-            for(let i = 0; i < numOfPeople; i++){
-              peopleOnTopSidewalk.push(new Person(foregroundCanvas.random(0, screenX), road.sidewalkY1 + 5, road.sidewalkY1 + road.h));
-            }
-            for(let i = 0; i < numOfPeople; i++){
-              peopleOnBottomSidewalk.push(new Person(foregroundCanvas.random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h));
-            }
-          }
-
-          p.draw = function(){
-            p.clear();
-            p.drawLayer3();
-            p.drawLayer4();
-            p.drawLayer5();
-          }
-          p.drawLayer3 = function(){
-            for(let i = 0; i < peopleOnTopSidewalk.length; i++){
-              peopleOnTopSidewalk[i].draw();
-            }
-          }
-
-          p.drawLayer4 = function(){
-            car1.show();
-            car2.show();
-          }
-
-          p.drawLayer5 = function(){
-            for(let i = 0; i < peopleOnBottomSidewalk.length; i++){
-              peopleOnBottomSidewalk[i].draw();
-            }
-
-            let fps = p.frameRate();
-            p.fill(255);
-            // stroke(0);
-            p.text("FPS: " + fps.toFixed(2), 5, p.height - 10);
-          }
-        }
+    for(let i = 0; i < numOfPeople; i++){
+      peopleOnTopSidewalk.push(new Person(foregroundCanvas.random(0, screenX), road.sidewalkY1 + 5, road.sidewalkY1 + road.h));
+    }
+    for(let i = 0; i < numOfPeople; i++){
+      peopleOnBottomSidewalk.push(new Person(foregroundCanvas.random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h));
+    }
 
 
 
-        // function preloadBackgroundSketch(){
-          // }
+    for(let i = 0; i < screenX/300; i++){
+      lampsOnTopSidewalk.push(new StreetLamp( (300 * i) + getRandomInt(-10, 10), ((screenY - ((screenY * 1.2)/10)) + 2), currentTime, lampimage, lightimage));
+    }
+    for(let i = 0; i < screenX/100; i++){
+      lampsOnBottomSidewalk.push(new StreetLamp( (300 * i) + getRandomInt(-10, 10), screenY - 9, currentTime, lampimage, lightimage));
+    }
 
-          var foregroundCanvas = new p5(foregroundSketch);
+    // testlamp = new StreetLamp(400, 400, currentTime lampimage, lightimage);
+  }
+
+  p.draw = function(){
+    p.clear();
+    p.drawLayer3();
+    p.drawLayer4();
+    p.drawLayer5();
+    // testlamp.draw();
+    // testlamp.drawLight();
+  }
+  p.drawLayer3 = function(){
+    for(let i = 0; i < lampsOnTopSidewalk.length; i++){
+      lampsOnTopSidewalk[i].draw();
+    }
+
+    for(let i = 0; i < peopleOnTopSidewalk.length; i++){
+      peopleOnTopSidewalk[i].draw();
+    }
+    for(let i = 0; i < lampsOnTopSidewalk.length; i++){
+      lampsOnTopSidewalk[i].drawLight();
+    }
+  }
+
+  p.drawLayer4 = function(){
+    car1.show();
+    car2.show();
+  }
+
+  p.drawLayer5 = function(){
+    for(let i = 0; i < lampsOnBottomSidewalk.length; i++){
+      lampsOnBottomSidewalk[i].draw();
+    }
+    for(let i = 0; i < peopleOnBottomSidewalk.length; i++){
+      peopleOnBottomSidewalk[i].draw();
+    }
+
+    let fps = p.frameRate();
+    p.fill(255);
+    // stroke(0);
+    p.text("FPS: " + fps.toFixed(2), 5, p.height - 10);
+    for(let i = 0; i < lampsOnBottomSidewalk.length; i++){
+      lampsOnBottomSidewalk[i].drawLight();
+    }
+  }
+}
+
+
+
+// function preloadBackgroundSketch(){
+  // }
+
+  var foregroundCanvas = new p5(foregroundSketch);
 
 
 // function drawForegroundSketch(){

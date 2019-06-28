@@ -147,7 +147,7 @@ class FrontBuilding{
     let minHeight = 13;
     let maxWidth = 6;
     let minWidth = 3;
-    this.scale = screenY / 85.8;
+    this.scale = 10;
     this.x = x;
     this.y = y;
     this.colorScheme = colorScheme;
@@ -226,7 +226,7 @@ class BackBuilding{
     let minHeight = 23;
     let maxWidth = 6;
     let minWidth = 3;
-    this.scale = screenY / 85.8;
+    this.scale = 10;
     this.x = x;
     this.y = y;
     this.colorScheme = colorScheme;
@@ -299,7 +299,7 @@ class Stars{
   }
 
   show(time){
-    console.log(time);
+    // console.log(time);
     if(time <= 7 || time >= 19){
       for(let i = 0; i < this.numberOfStars; i++){
         backgroundCanvas.noStroke();
@@ -337,17 +337,18 @@ class Sun{
     let tintValue;
     if(hours < 12){
       size = backgroundCanvas.map(hours, 0, 12, screenX/4, screenX/2);
-      height = backgroundCanvas.map(hours, 0, 12, screenX/2 , screenX/20);
+      height = backgroundCanvas.map(hours, 0, 12, screenY*1.3, screenY/2 - 400);
       tintValue = backgroundCanvas.map(hours, 0, 12, 100, 255);
     }
     else{
       let calculatedTime = 24 - hours;
       size = backgroundCanvas.map(calculatedTime, 0, 12, screenX/4, screenX/2);
-      height = backgroundCanvas.map(calculatedTime, 0, 12, screenX/2, screenX/20);
+      height = backgroundCanvas.map(calculatedTime, 0, 12, screenY*1.3, screenY/2 - 400);
       tintValue = backgroundCanvas.map(calculatedTime, 0, 12, 100, 255);
     }
-    backgroundCanvas.tint(255, tintValue);
+    // backgroundCanvas.tint(255, tintValue);
     backgroundCanvas.image(sunimg, height, height, size, size);
+    console.log(height);
   }
 }
 
@@ -420,19 +421,21 @@ class Car{
     let totalYoffset = (screenY * 1.2)/10;
     this.x = -image.width * foregroundCanvas.random(1, 5);
     this.y = screenY - totalYoffset;
+    this.image = image;
+    this.scale = (22.5 * 4)/this.image.height;
+    this.height = this.scale * this.image.height;
+    this.speed = foregroundCanvas.random(1, 3);
     if(right){
-      this.y = screenY - totalYoffset;
+      this.y = ((screenY - ((screenY * 1.2)/10)) + 3) - this.height;
     }
     else{
-      this.y = screenY - totalYoffset/1.7;
+      this.y = ((screenY - ((screenY * 1.2)/10)) + 9)- this.height;
     }
 
-    this.image = image;
-    this.scale = screenY * 0.00034965034965034965;
-    this.speed = foregroundCanvas.random(1, 3);
     this.roadLength = foregroundCanvas.random(2,4);
     this.movingRight = right;
     this.howDark = 255;
+    console.log(this.scale);
   }
 
   // drawCarShape(impx, impy, scale){
@@ -462,7 +465,7 @@ class Car{
 
   show(){
     this.changeTint();
-    foregroundCanvas.tint(this.howDark, 240)
+    // foregroundCanvas.tint(this.howDark, 240)
     if(this.movingRight){
       foregroundCanvas.image(this.image, this.x, this.y, this.image.width * this.scale, this.image.height * this.scale);
       this.x += this.speed;
@@ -518,6 +521,47 @@ const shirtColors = [
   [255, 106, 213], [199, 116, 232], [173, 140, 255],
   [135, 149, 232], [148, 208, 255]
 ]
+
+class StreetLamp{
+  constructor(x, y, time, lampImg, lightImg){
+    this.x = x;
+    this.y = y;
+
+    if(time >= 19 || time <= 7){
+      this.isOn = true;
+    }
+    else{
+      this.isOn = false;
+    }
+    // console.log(this.isOn);
+    let scale = (22.5 * 2)/lightImg.height;
+    this.lightImg = lightImg;
+    this.lightWidth = lightImg.width/2;
+    this.lightHeight = lightImg.height/2;
+    this.lampImg = lampImg;
+    this.height = lampImg.height * scale;
+    this.width = lampImg.width * scale;
+  }
+
+  updateTime(time){
+    if(time >= 19 || time <= 7){
+      this.isOn = true;
+    }
+    else{
+      this.isOn = false;
+    }
+  }
+
+  draw(){
+    foregroundCanvas.image(this.lampImg, this.x - this.width, this.y - this.height, this.width, this.height);
+  }
+
+  drawLight(){
+    if(this.isOn){
+      foregroundCanvas.image(this.lightImg, (this.x - (this.lightWidth/2)) - this.width/2, (this.y - (this.lightHeight/2)) - (this.height * 4)/5, this.lightWidth, this.lightHeight);
+    }
+  }
+}
 
 
 class Person{
@@ -635,6 +679,8 @@ class Person{
     foregroundCanvas.fill(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
     // console.log(this.shirtColor[0] - opasityOfDay, this.shirtColor[1] - opasityOfDay, this.shirtColor[2] - opasityOfDay);
     foregroundCanvas.rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
+
+    // console.log((20 * myScale) + (10 * myScale));
     // fill(0, 0, 0, opasityOfDay);
     // rect(x - (2 * myScale), y + (10 * myScale)- (myScale*(30)), 14 * myScale, 20 * myScale);
   }
@@ -650,15 +696,6 @@ class Person{
           this.x += this.movementSpeed;
         }
       }
-
-      // if(this.movementY === true){
-      //   if(this.personMovingY === this.personMovingYList.movingUp){
-      //     this.y -= this.movementSpeed;
-      //   }
-      //   else if(this.personMovingY === this.personMovingYList.movingDown){
-      //     this.y += this.movementSpeed;
-      //   }
-      // }
     }
     if(foregroundCanvas.second()%this.timing === 0){
       this.changeAction();
