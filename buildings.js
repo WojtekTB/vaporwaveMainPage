@@ -357,8 +357,8 @@ class Road{
     let totalYoffset = (screenY * 1.2)/10;
     this.x = 0;
     this.y = screenY - totalYoffset;
-    this.w = 25;
-    this.h = 12;
+    this.w = 25;//50
+    this.h = 12;//12
     this.perspectiveOffset = 15;
     this.sidewalkY1 = this.y;
     this.sidewalkY2 = this.y + ((screenY * 1.2)/10) - this.h;
@@ -372,7 +372,7 @@ class Road{
     }
     else{
       opasityOfDay = Math.floor(backgroundCanvas.map(currentTime, 0, 12, 0, 45));
-    }
+    }9
     this.howDark = opasityOfDay;
   }
 
@@ -402,6 +402,26 @@ class Road{
     }
   }
 
+  showCrossWalk(){
+    let crossWalkX = 200;
+    let crossWalkW = 100;
+    // backgroundCanvas.fill(113, 97, 97);
+    backgroundCanvas.fill(113, 97, 97);
+    backgroundCanvas.quad(crossWalkX - (crossWalkW/2) + ((crossWalkW + 100) ), this.y+this.h,
+      crossWalkX - (crossWalkW/2) + crossWalkW*2 + ((crossWalkW + 100) ), this.y+this.h,
+      crossWalkX - (crossWalkW/2) + crossWalkW*2 + (this.perspectiveOffset * 7.3) + ((crossWalkW + 100) ), screenY - this.h,
+      crossWalkX - (crossWalkW/2) + (this.perspectiveOffset * 7.3) + ((crossWalkW + 100) ), screenY - this.h);
+
+    backgroundCanvas.fill(255, 229, 229);
+    for(let i = 0; i < ((screenY - this.h) - (this.y+this.h))/(this.h + 5) - 1; i++){
+      backgroundCanvas.quad(crossWalkX + crossWalkW/2 + ((this.w + 100)) + (i * this.w), this.y+this.h + 5 + (i * (this.h + 5)),
+        crossWalkX + crossWalkW/2 + this.w*2 + ((this.w + 100)) + crossWalkW + (i * this.w), this.y+this.h + 5 + (i * (this.h + 5)),
+        crossWalkX + crossWalkW/2 + this.w*2 + this.perspectiveOffset + ((this.w + 100))+ crossWalkW + (i * this.w), this.y+(this.h * 2) + 5 + (i * (this.h + 5)),
+        crossWalkX + crossWalkW/2 + this.perspectiveOffset + ((this.w + 100)) + (i * this.w), this.y+(this.h * 2) + 5 + (i * (this.h + 5)));
+    }
+
+  }
+
   show(){
     this.changeTint();
     backgroundCanvas.fill(147,112,190);
@@ -409,9 +429,76 @@ class Road{
     this.showSidewalk(0);
     this.showRoad();
     this.showSidewalk(((screenY * 1.2)/10) - this.h);
+    this.showCrossWalk();
     backgroundCanvas.fill(0, 0, 0, this.howDark);
     backgroundCanvas.rect(-1, this.y, screenX, screenY - this.y);
   }
+}
+//
+// class CrossWalk{
+//   constructor(){
+//     this.x;
+//     this.y;
+//   }
+// }
+
+class BusStop{
+  constructor(x, y, busStopImage){
+    this.x = x;
+    this.y = y;
+    this.busStopImage = busStopImage;
+    this.imgH = this.busStopImage.height * 1.5;
+    this.imgW = this.busStopImage.width * 1.5;
+  }
+
+  draw(){
+    // foregroundCanvas.fill(0);
+    // foregroundCanvas.rect(this.x, this.y, 10, 10);
+    foregroundCanvas.image(this.busStopImage, this.x, this.y - this.busStopImage.height + 2);
+  }
+
+  // drawpeopleImWInd(inputX, inputY, inputWidth, inputHeight, topPadd, pplWid){
+  //   if(this.seed[2] == 1){//standard square evenly spaced windows but with windows split in two
+  //     fill(this.winColor[0], this.winColor[1], this.winColor[2]);
+  //     let winWidth = 10;
+  //     let padding = 8;
+  //     let spacing = 3;
+  //     let numbOfWinPerRow = (inputWidth - (padding*2))/(winWidth+spacing+1);
+  //     let numbOfWinPerCol = (inputHeight - (padding*2))/(winWidth+spacing) - 2;
+  //     for(let j = 0; j < numbOfWinPerCol; j++){
+  //       for(let i = 0; i < numbOfWinPerRow; i++){
+  //         rect(inputX + padding + (i*(winWidth+spacing)), (inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, winWidth, winWidth);
+  //       }
+  //     }
+  //   }
+  //   else if(this.seed[2] == 2){//standard square evenly spaced windows but with windows split in two horizontally
+  //     fill(this.winColor[0], this.winColor[1], this.winColor[2]);
+  //     let winWidth = 15;
+  //     let padding = 10;
+  //     let spacing = 5;
+  //     let numbOfWinPerRow = (inputWidth - (padding*2))/(winWidth+spacing+1);
+  //     let numbOfWinPerCol = (inputHeight - (padding*2))/(winWidth+spacing) - 2;
+  //     for(let j = 0; j < numbOfWinPerCol; j++){
+  //       for(let i = 0; i < numbOfWinPerRow; i++){
+  //         rect(inputX + padding + (i*(winWidth+spacing)),( inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, ((winWidth - 4)/2), winWidth);
+  //         rect((inputX + padding + (i*(winWidth+spacing))) + ((winWidth - 4)/2) + 2, (inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, ((winWidth - 4)/2), winWidth);
+  //       }
+  //     }
+  //   }
+  //   else if(this.seed[2] == 3){//standard square evenly spaced windows but with windows split in two vertically
+  //     fill(this.winColor[0], this.winColor[1], this.winColor[2]);
+  //     let winWidth = 15;
+  //     let padding = 10;
+  //     let spacing = 5;
+  //     let numbOfWinPerRow = (inputWidth - (padding*2))/(winWidth+spacing);
+  //     let numbOfWinPerCol = (inputHeight - (padding*2))/(winWidth+spacing) - 2;
+  //     for(let j = 0; j < numbOfWinPerCol; j++){
+  //       for(let i = 0; i < numbOfWinPerRow; i++){
+  //         rect(inputX + padding + (i*(winWidth+spacing)), (inputY + (j*(winWidth+spacing)) - inputHeight) + topPadd, winWidth-1, (winWidth - 4)/2);
+  //         rect(inputX + padding + (i*(winWidth+spacing)), (inputY + (j*(winWidth+spacing)) + ((winWidth - 4)/2) - inputHeight + 2 ) + topPadd, winWidth -1, (winWidth - 4)/2);
+  //       }
+  //     }
+  //   }
 }
 
 class Car{
@@ -426,10 +513,10 @@ class Car{
     this.height = this.scale * this.image.height;
     this.speed = foregroundCanvas.random(1, 3);
     if(right){
-      this.y = ((screenY - ((screenY * 1.2)/10)) + 3) - this.height;
+      this.y = ((screenY - ((screenY * 1.2)/10)) + 3) - this.height/2;
     }
     else{
-      this.y = ((screenY - ((screenY * 1.2)/10)) + 9)- this.height;
+      this.y = (screenY - 12) - this.height;
     }
 
     this.roadLength = foregroundCanvas.random(2,4);
@@ -541,6 +628,7 @@ class StreetLamp{
     this.lampImg = lampImg;
     this.height = lampImg.height * scale;
     this.width = lampImg.width * scale;
+    this.updateTime(currentTime);
   }
 
   updateTime(time){

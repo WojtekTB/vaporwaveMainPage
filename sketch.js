@@ -23,8 +23,8 @@ var defaultScreenPixels = [];
 
 var testBuild;
 
-var testlamp;
-
+var testBusStop;
+var stopImage;
 var currentTime = 10;
 
 // function changeTime(time){
@@ -75,7 +75,7 @@ var backgroundSketch = function(p){
         for(let i = 0; i < screenX/300; i++){
           lampsOnTopSidewalk[i].updateTime(currentTime);
         }
-        for(let i = 0; i < screenX/100; i++){
+        for(let i = 0; i < screenX/300; i++){
           lampsOnBottomSidewalk[i].updateTime(currentTime);
         }
       }
@@ -170,9 +170,11 @@ var foregroundSketch = function(p){
   p.preload = function(){
     lampimage = p.loadImage("./images/lamp.png");
     lightimage = p.loadImage("./images/light.png");
+    stopImage = p.loadImage("./images/bus_station.png");
   }
 
   p.setup = function(){
+    currentTime = p.hour();
     let myCanvas = p.createCanvas(screenX, screenY);
     myCanvas.parent("frontCanvas");
     car1 = new Car(carimage, true);
@@ -196,16 +198,24 @@ var foregroundSketch = function(p){
     for(let i = 0; i < numOfPeople; i++){
       peopleOnBottomSidewalk.push(new Person(foregroundCanvas.random(0, screenX), road.sidewalkY2 + 5, road.sidewalkY2 + road.h));
     }
+    // console.log(road.y);
 
 
 
     for(let i = 0; i < screenX/300; i++){
       lampsOnTopSidewalk.push(new StreetLamp( (300 * i) + getRandomInt(-10, 10), ((screenY - ((screenY * 1.2)/10)) + 2), currentTime, lampimage, lightimage));
     }
-    for(let i = 0; i < screenX/100; i++){
+    for(let i = 0; i < screenX/300; i++){
       lampsOnBottomSidewalk.push(new StreetLamp( (300 * i) + getRandomInt(-10, 10), screenY - 9, currentTime, lampimage, lightimage));
     }
+    for(let i = 0; i < screenX/300; i++){
+      lampsOnTopSidewalk[i].updateTime(currentTime);
+    }
+    for(let i = 0; i < screenX/300; i++){
+      lampsOnBottomSidewalk[i].updateTime(currentTime);
+    }
 
+    testBusStop = new BusStop(foregroundCanvas.random(200, screenX - 200), road.y, stopImage);
     // testlamp = new StreetLamp(400, 400, currentTime lampimage, lightimage);
   }
 
@@ -220,6 +230,7 @@ var foregroundSketch = function(p){
   p.drawLayer3 = function(){
     for(let i = 0; i < lampsOnTopSidewalk.length; i++){
       lampsOnTopSidewalk[i].draw();
+      testBusStop.draw();
     }
 
     for(let i = 0; i < peopleOnTopSidewalk.length; i++){

@@ -64,6 +64,7 @@
       function onSliderChange(e) {
         const newValue = parseInt(e.target.value, 10);
         backgroundCanvas.changeTime(newValue);
+        // foregroundCanvas.changeTime(newValue);
         // console.log(newValue);
         timeTextElement.innerHTML = `${newValue}:${("0" + date.getMinutes()).slice(-2)}`
       }
